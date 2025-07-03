@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 try {
     $user = new User(
-        null, // ID будет null для нового пользователя
+        null, 
         trim($_POST['first_name'] ?? ''),
         trim($_POST['last_name'] ?? ''),
         !empty($_POST['middle_name']) ? trim($_POST['middle_name']) : null,
@@ -42,11 +42,11 @@ try {
     if (!empty($_FILES['avatar']['tmp_name'])) {
         $uploadDir = __DIR__ . '/uploads/';
         if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0755, true);
+            mkdir($uploadDir, 0755, true); //права доступа (владелец: чтение/запись, остальные: чтение)
         }
         
-        $avatarName = uniqid() . '_' . basename($_FILES['avatar']['name']);
-        $targetPath = $uploadDir . $avatarName;
+        $avatarName = uniqid() . '_' . basename($_FILES['avatar']['name']); //генерация айди и имя файла из пути -пот опасные символы
+        $targetPath = $uploadDir . $avatarName; //полный путь
         
         if (move_uploaded_file($_FILES['avatar']['tmp_name'], $targetPath)) {
             $user = new User(

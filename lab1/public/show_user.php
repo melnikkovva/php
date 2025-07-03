@@ -22,13 +22,13 @@ try {
         throw new RuntimeException("Пользователь не найден");
     }
     
-    // Функция для безопасного вывода данных
+    //функция для безопасного вывода данных
     function safeOutput(?string $value): string
     {
         return $value !== null ? htmlspecialchars($value, ENT_QUOTES, 'UTF-8') : 'Не указано';
     }
     
-    // Форматирование даты рождения
+    //фрматирование даты рождения
     $birthDate = $user->getBirthDate() ? date('d.m.Y', strtotime($user->getBirthDate())) : 'Не указана';
     
 } catch (InvalidArgumentException $e) {
