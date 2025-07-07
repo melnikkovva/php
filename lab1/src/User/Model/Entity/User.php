@@ -1,5 +1,7 @@
 <?php
 
+namespace App\User\Model\Entity;
+
 class User
 {
     public function __construct(
@@ -25,16 +27,7 @@ class User
     public function getPhone(): ?string { return $this->phone; }
     public function getAvatarPath(): ?string { return $this->avatarPath; }
 
-    // Сеттеры
-    public function setId(int $id): void { $this->id = $id; }
-    public function setFirstName(string $firstName): void { $this->firstName = $firstName; }
-    public function setLastName(string $lastName): void { $this->lastName = $lastName; }
-    public function setMiddleName(?string $middleName): void { $this->middleName = $middleName; }
-    public function setGender(?string $gender): void { $this->gender = $gender; }
-    public function setBirthDate(?string $birthDate): void { $this->birthDate = $birthDate; }
-    public function setEmail(string $email): void { $this->email = $email; }
-    public function setPhone(?string $phone): void { $this->phone = $phone; }
-    public function setAvatarPath(?string $avatarPath): void { $this->avatarPath = $avatarPath; }
+   //форматирование
 
     public function toArray(): array
     {
