@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 namespace App\User\Model;
 
 use App\User\Model\Entity\User;

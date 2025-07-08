@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Connection;
 
 require_once __DIR__ . '/../../config/db_config.php';
@@ -10,7 +11,6 @@ use RuntimeException;
 class Database
 {
      /**
-     * Устанавливает подключение к БД (Singleton)
      * @return PDO
      * @throws RuntimeException
      */
@@ -40,7 +40,6 @@ class Database
     private static ?PDO $instance = null;
 
     /**
-     * Получает параметры подключения из конфига
      * @return array{dsn:string, username:string, password:string}
      */
     private static function getConnectionParams(): array
@@ -52,12 +51,6 @@ class Database
         ];
     }
 
-   
-
-    /**
-     * Закрываем возможность создания экземпляра класса
-     */
     private function __construct() {}
     private function __clone() {}
-    public function __wakeup() {}
 }

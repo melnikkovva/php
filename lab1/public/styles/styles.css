@@ -118,9 +118,9 @@ body {
 .user-avatar img {
     width: 150px;
     height: 150px;
-    border-radius: 50%;
+    border-radius: 5%;
     object-fit: cover;
-    border: 3px solid #3498db;
+    box-shadow: 3px solid #3498db;
 }
 
 .user-details {

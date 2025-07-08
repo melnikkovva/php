@@ -74,7 +74,7 @@ class UserController
             return null;
         }
 
-        $uploadDir = __DIR__ . '/../../../public/uploads/';
+        $uploadDir = __DIR__ . '/../../../uploads/';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }

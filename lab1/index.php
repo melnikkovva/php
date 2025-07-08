@@ -5,13 +5,10 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use App\User\Controller\UserController;
 
-// Получаем путь из URL
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-// Инициализируем контроллер
 $userController = new UserController();
 
-// Обработка маршрутов
 switch (true) {
     case $path === '/' || $path === '/register':
         $userController->showRegistrationForm();
