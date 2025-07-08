@@ -62,6 +62,47 @@ class User
         return $this->avatarPath;
     }
 
+
+    public function setFirstName(string $firstName): void
+    {
+        $this->firstName = $firstName;
+    }
+
+    public function setLastName(string $lastName): void
+    {
+        $this->lastName = $lastName;
+    }
+
+    public function setMiddleName(?string $middleName): void
+    {
+        $this->middleName = $middleName;
+    }
+
+    public function setGender(?string $gender): void
+    {
+        $this->gender = $gender;
+    }
+
+    public function setBirthDate(?string $birthDate): void
+    {
+        $this->birthDate = $birthDate;
+    }
+
+    public function setEmail(string $email): void
+    {
+        $this->email = $email;
+    }
+
+    public function setPhone(?string $phone): void
+    {
+        $this->phone = $phone;
+    }
+
+    public function setAvatarPath(?string $avatarPath): void
+    {
+        $this->avatarPath = $avatarPath;
+    }
+    
     public function toArray(): array
     {
         return [
