@@ -51,7 +51,7 @@
             
             <div class="form-group">
                 <label for="avatar">Avatar:</label>
-                <input type="file" id="avatar" name="avatar" accept="image/png">
+                <input type="file" id="avatar" name="avatar" accept="image/png,image/jpeg,image/gif">
             </div>
             
             <button type="submit" class="submit-btn">Register</button>

@@ -40,6 +40,21 @@ class UserTable
         }
     }
 
+    public function updateAvatarPath(int $userId, string $avatarPath): void
+    {
+        $sql = "UPDATE `user` SET `avatar_path` = :avatar_path WHERE `user_id` = :user_id";
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([
+                ':avatar_path' => $avatarPath,
+                ':user_id' => $userId
+            ]);
+        } catch (PDOException $e) {
+            throw new RuntimeException("Failed to update avatar path: " . $e->getMessage());
+        }
+    }
+
     public function find(int $userId): ?User
     {
         $sql = "SELECT `user_id`, `first_name`, `last_name`, `middle_name`, `gender`, `birth_date`, `email`, `phone`, `avatar_path`

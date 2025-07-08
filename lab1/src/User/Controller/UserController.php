@@ -9,6 +9,8 @@ use RuntimeException;
 class UserController
 {
     private UserTable $userTable;
+    private const ALLOWED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/gif'];
+    private const UPLOAD_DIR = __DIR__ . '/../../../uploads/';
 
     public function __construct()
     {
@@ -29,9 +31,14 @@ class UserController
         }
 
         try {
-            $avatarPath = $this->handleAvatarUpload();
-            $user = $this->createUserFromRequest($_POST, $avatarPath);
+            $user = $this->createUserFromRequest($_POST);
             $userId = $this->userTable->save($user);
+            
+            // Handle avatar upload after we have the user ID
+            if (!empty($_FILES['avatar']['tmp_name'])) {
+                $avatarPath = $this->handleAvatarUpload($userId);
+                $this->userTable->updateAvatarPath($userId, $avatarPath);
+            }
             
             header("Location: /user/{$userId}", true, 303);
             exit();
@@ -68,28 +75,63 @@ class UserController
         }
     }
 
-    private function handleAvatarUpload(): ?string
+    private function handleAvatarUpload(int $userId): string
     {
-        if (empty($_FILES['avatar']['tmp_name'])) {
-            return null;
-        }
-
-        $uploadDir = __DIR__ . '/../../../uploads/';
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0755, true);
-        }
+        $file = $_FILES['avatar'];
         
-        $avatarName = uniqid() . '_' . basename($_FILES['avatar']['name']);
-        $targetPath = $uploadDir . $avatarName;
-
-        if (!move_uploaded_file($_FILES['avatar']['tmp_name'], $targetPath)) {
-            throw new RuntimeException("Failed to upload avatar");
+        // Check for upload errors
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            throw new RuntimeException("File upload error: " . $file['error']);
         }
 
-        return '/uploads/' . $avatarName;
+        // Check MIME type
+        $fileInfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($fileInfo, $file['tmp_name']);
+        finfo_close($fileInfo);
+
+        if (!in_array($mimeType, self::ALLOWED_MIME_TYPES, true)) {
+            throw new RuntimeException("Invalid file type. Only PNG, JPEG, and GIF are allowed.");
+        }
+
+        // Create upload directory if it doesn't exist
+        if (!is_dir(self::UPLOAD_DIR)) {
+            mkdir(self::UPLOAD_DIR, 0755, true);
+        }
+
+        // Determine file extension based on MIME type
+        $extension = match ($mimeType) {
+            'image/png' => 'png',
+            'image/jpeg' => 'jpg',
+            'image/gif' => 'gif',
+            default => throw new RuntimeException("Unsupported image type")
+        };
+
+        $filename = "avatar{$userId}.{$extension}";
+        $targetPath = self::UPLOAD_DIR . $filename;
+
+        // Remove old avatar if exists
+        $this->removeOldAvatar($userId);
+
+        if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
+            throw new RuntimeException("Failed to save uploaded file");
+        }
+
+        return "/uploads/" . $filename;
     }
 
-    private function createUserFromRequest(array $data, ?string $avatarPath): User
+    private function removeOldAvatar(int $userId): void
+    {
+        $pattern = self::UPLOAD_DIR . "avatar{$userId}.*";
+        $files = glob($pattern);
+        
+        foreach ($files as $file) {
+            if (is_file($file)) {
+                unlink($file);
+            }
+        }
+    }
+
+    private function createUserFromRequest(array $data): User
     {
         $requiredFields = ['first_name', 'last_name', 'email'];
         foreach ($requiredFields as $field) {
@@ -111,7 +153,7 @@ class UserController
             $data['birth_date'] ?? null,
             trim($data['email']),
             !empty($data['phone']) ? trim($data['phone']) : null,
-            $avatarPath
+            null // Avatar path will be set after user creation
         );
     }
 
